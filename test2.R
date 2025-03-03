@@ -60,6 +60,9 @@ outside_small <- data.frame(outside_small)
 # Checking that it has the correct structure
 str(outside_small)
 
+# Converting data into a percentage from a proportion
+outside_small <- outside_small[,-1] * 100
+
 # Add a column for the wavelengths extracted from perClass Mira
 outside_small <- cbind(seq(350, 1002, 4), outside_small)
 colnames(outside_small)[1] <- "wl"
@@ -74,24 +77,24 @@ outside_small <- procspec(outside_small, fixneg = "zero")
 plot(outside_small)
 
 # First plot: General reflectance
-plot(outside_small, col = "white", ylim = c(0, max(outside_small[, -1] * 100)), main = "Grackle Throat Reflectance")
+plot(outside_small, col = "white", ylim = c(0, max(outside_small[, -1])), main = "Grackle Throat Reflectance")
 for (i in 2:length(colnames(outside_small))) {
   reflectance <- outside_small[, i]
-  lines(x = 350:700, y = reflectance[-c(1:50)] * 100, col = spec2rgb(as.rspec(data.frame(wl = outside_small$wl, reflectance = outside_small[, i]))), lwd = 2)
+  lines(x = 350:700, y = reflectance[-c(1:50)], col = spec2rgb(as.rspec(data.frame(wl = outside_small$wl, reflectance = outside_small[, i]))), lwd = 2)
 }
 
 # Second plot: Limited range
 plot(outside_small, col = "white", ylim = c(0, 20), main = "Outside Small Birds Reflectance", xlim = c(400, 700))
 for (i in 2:length(colnames(outside_small))) {
   reflectance <- outside_small[, i]
-  lines(x = 350:700, y = reflectance[-c(1:50)] * 100, col = spec2rgb(as.rspec(data.frame(wl = outside_small$wl, reflectance = outside_small[, i]))), lwd = 2)
+  lines(x = 350:700, y = reflectance[-c(1:50)], col = spec2rgb(as.rspec(data.frame(wl = outside_small$wl, reflectance = outside_small[, i]))), lwd = 2)
 }
 
 # Third plot: Adjusted transparency
 plot(outside_small, col = "white", ylim = c(0, 100), main = "Outside Small Birds Reflectance", xlim = c(380, 700))
 for (i in 2:length(colnames(outside_small))) {
   reflectance <- outside_small[, i]
-  lines(x = 350:700, y = reflectance[-c(1:50)] * 100, col = adjustcolor(spec2rgb(as.rspec(data.frame(wl= outside_small$wl, reflectance = outside_small[, i]))), 0.5), lwd = 3)
+  lines(x = 350:700, y = reflectance[-c(1:50)], col = adjustcolor(spec2rgb(as.rspec(data.frame(wl= outside_small$wl, reflectance = outside_small[, i]))), 0.5), lwd = 3)
 }
 
 
