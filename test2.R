@@ -1,8 +1,8 @@
 # Install necessary packages (if not installed)
-install.packages("readxl")
-install.packages("tidyverse")
-install.packages("tidylog")
-install.packages("pavo")
+# install.packages("readxl")
+# install.packages("tidyverse")
+# install.packages("tidylog")
+# install.packages("pavo")
 
 # Load required libraries
 library(readxl)
@@ -12,6 +12,9 @@ library(pavo)
 
 # Read in the data from the Dickey Collection
 outside_small <- read_xlsx("Outside_small.xlsx", skip = 5)
+
+# Removes sd columns
+outside_small <- outside_small[,seq(1,175,1)]
 
 # Print column names to identify relevant columns
 print(colnames(outside_small))
@@ -51,8 +54,14 @@ outside_small <- outside_small %>% select(-c("img.number", "date", "time"))
 # Transpose (flip) the data frame
 outside_small <- t(outside_small)
 
+# Turning outside_small into a base R dataframe
+outside_small <- data.frame(outside_small)
+
+# Checking that it has the correct structure
+str(outside_small)
+
 # Add a column for the wavelengths extracted from perClass Mira
-outside_small <- cbind(seq(350, 702, 4), outside_small)
+outside_small <- cbind(seq(350, 1002, 4), outside_small)
 colnames(outside_small)[1] <- "wl"
 
 # Convert the dataset into an 'rspec' object, which is required for 'pavo'
