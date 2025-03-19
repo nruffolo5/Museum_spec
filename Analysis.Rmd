@@ -1,0 +1,102 @@
+---
+title: "Analysis"
+author: "Nicholas Ruffolo"
+date: "`r Sys.Date()`"
+output: html_document
+---
+# Libraries
+
+Loading in all of the libraries
+
+```{r}
+# Install necessary packages (if not installed)
+# install.packages("readxl")
+# install.packages("tidyverse")
+# install.packages("tidylog")
+# install.packages("pavo")
+
+# Load required libraries
+library(readxl)
+library(tidyverse)
+library(tidylog)
+library(pavo)
+```
+
+# Data
+
+Loading in all of the data
+
+```{r}
+# Reading in all of the data files for the small birds
+
+inside_small <- read_xlsx("Museum_indoors_small.xlsx", skip = 5)
+shaded_small <- read_xlsx("Outside_shaded_small.xlsx", skip = 5)
+outside_small <- read_xlsx("Outside_small.xlsx", skip = 5)
+
+
+# Removing the sd columns
+inside_small <- inside_small[,seq(1,175,1)]
+shaded_small <- shaded_small[,seq(1,175,1)]
+outside_small <- outside_small[,seq(1,175,1)]
+
+
+# Identify columns matching the wavelength pattern
+# All dataframes have identical naming conventions so we only need one vector here
+wavelength_cols <- grep("^\\d+\\.\\.\\.", colnames(inside_small), value = TRUE)
+
+
+# Select relevant columns dynamically
+inside_small <- inside_small %>% select(name...1, name...2, pixels, all_of(wavelength_cols))
+
+shaded_small <- shaded_small %>% select(name...1, name...2, pixels, all_of(wavelength_cols))
+
+outside_small <- outside_small %>% select(name...1, name...2, pixels, all_of(wavelength_cols))
+
+
+# Create an identifier for each specimen and separate metadata
+inside_small <- inside_small %>%
+  separate(name...1, into = c("species", "position", "img.number", "date", "time"), sep = "_", extra = "merge", fill = "right", convert = FALSE)
+
+shaded_small <- shaded_small %>%
+  separate(name...1, into = c("species", "position", "img.number", "date", "time"), sep = "_", extra = "merge", fill = "right", convert = FALSE)
+
+outside_small <- outside_small %>%
+  separate(name...1, into = c("species", "position", "img.number", "date", "time"), sep = "_", extra = "merge", fill = "right", convert = FALSE)
+
+
+# Changing name of body part column
+inside_small <- inside_small %>% rename(Body.part = name...2) %>% mutate(lighting = rep("inside", 27)) %>% relocate(lighting, .after = species)
+shaded_small <- shaded_small %>% rename(Body.part = name...2) %>% mutate(lighting = rep("shaded", 29)) %>% relocate(lighting, .after = species)
+outside_small <- outside_small %>% rename(Body.part = name...2) %>% mutate(lighting = rep("outside", 32)) %>% relocate(lighting, .after = species)
+
+
+# Creating a dataframe for all of the small birds
+data_small <- full_join(inside_small, outside_small)
+data_small <- full_join(data_small, shaded_small)
+
+```
+# Sample Plots from each Color Type
+
+# Monocolor
+
+```{r}
+
+Darwins.finch <- data_small %>% filter(species == "Geospiza.fuliginosa")
+
+rspec <- data.frame(wl = seq(350, 1002, 4), t(Darwins.finch[,-c(1:8)])*100)
+
+rspec <- as.rspec(rspec, interp = TRUE, lim = c(300,700))
+
+rspec <- procspec(rspec, fixneg = "zero")
+
+
+
+plot(rspec, col = "white", xlim = c(380, 700))
+
+
+
+
+
+```
+
+
