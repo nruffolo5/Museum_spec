@@ -89,9 +89,12 @@ rspec <- as.rspec(rspec, interp = TRUE, lim = c(300,700))
 
 rspec <- procspec(rspec, fixneg = "zero")
 
-
+colnames(rspec) <- c("wl",Darwins.finch$lighting)
 
 plot(rspec, col = "white", xlim = c(380, 700))
+lines(x = 300:700, y = rspec[,2], col = "red")
+lines(x = 300:700, y = rspec[,3], col = "green")
+lines(x = 300:700, y = rspec[,4], col = "blue")
 
 
 
